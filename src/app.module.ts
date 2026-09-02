@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './modules/user/user.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { BookModule } from './modules/book/book.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { UserModule } from './modules/user/user.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { BookModule } from './modules/book/book.module'
 
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
   imports: [
@@ -16,6 +16,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'lifeisstrange',
       password: '263919az&&d!',
       database: 'book',
+      autoLoadEntities: true,
+      // entities: [User], // 和上面的autoLoadEntities任选一个
       // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
     }),
