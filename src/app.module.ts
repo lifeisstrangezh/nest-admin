@@ -31,7 +31,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       port: 3306,
       username: 'lifeisstrange',
       password: '263919az&&d!',
-      database: 'book',
+      database: 'online_book',
       autoLoadEntities: true,
       // entities: [User], // 和上面的autoLoadEntities任选一个
       // entities: [__dirname + '/**/*.entity{.ts,.js}'],

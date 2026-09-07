@@ -9,6 +9,7 @@ import { Observable } from 'rxjs'
 import { IS_PUBLIC_KEY } from './public.decorator'
 import { JwtService } from '@nestjs/jwt'
 import { JWT_SECRET_KEY } from './auth.jwt.secrect'
+import { isBlacklisted } from './token-blacklist'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -26,6 +27,10 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     const token = extractTokenFromHeader(request)
     if (!token) {
+      throw new UnauthorizedException()
+    }
+    // 已登出的 token 直接拒绝
+    if (isBlacklisted(token)) {
       throw new UnauthorizedException()
     }
     try {

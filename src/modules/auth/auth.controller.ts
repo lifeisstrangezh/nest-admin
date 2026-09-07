@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseFilters,
+  Req,
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { CreateAuthDto } from './dto/create-auth.dto'
@@ -25,5 +26,11 @@ export class AuthController {
   create(@Body() createAuthDto: CreateAuthDto) {
     console.log(createAuthDto)
     return wrapperResponse(this.authService.login(createAuthDto), '登陆成功')
+  }
+
+  @Post('logout')
+  logout(@Req() req) {
+    const token = req.headers.authorization?.split(' ')[1] ?? ''
+    return wrapperResponse(this.authService.logout(token), '登出成功')
   }
 }

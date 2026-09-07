@@ -7,6 +7,7 @@ import { Auth } from './entities/auth.entity'
 import { UserService } from '../user/user.service'
 import { JwtService } from '@nestjs/jwt'
 import * as md5 from 'md5'
+import { addToBlacklist } from './token-blacklist'
 
 @Injectable()
 export class AuthService {
@@ -29,5 +30,11 @@ export class AuthService {
     return {
       token: await this.jwtService.signAsync(payload),
     }
+  }
+
+  async logout(token: string) {
+    // 解析 token 拿到过期时间，黑名单记录到与 token 相同的过期时间
+    const payload = this.jwtService.decode(token)
+    addToBlacklist(token, payload?.exp ? payload.exp * 1000 : undefined)
   }
 }

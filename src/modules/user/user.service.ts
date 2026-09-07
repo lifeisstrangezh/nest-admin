@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { User } from './entities/user.entity'
+import * as md5 from 'md5'
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,7 @@ export class UserService {
   createUser(createUserDto: CreateUserDto) {
     const user = new User()
     user.username = createUserDto.username
-    user.password = createUserDto.password
+    user.password = md5(createUserDto.password).toUpperCase()
     user.nickname = createUserDto.nickname || createUserDto.username
     user.role = createUserDto.role
     user.avatar = createUserDto.avatar

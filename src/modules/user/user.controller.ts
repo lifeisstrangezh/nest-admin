@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { wrapperResponse } from '../../utils'
 import { query } from 'express'
+import { Public } from '../auth/public.decorator'
 
 @Controller('user')
 export class UserController {
@@ -41,6 +42,7 @@ export class UserController {
     return wrapperResponse(this.userService.update(body), '编辑用户成功')
   }
 
+  @Public()
   @Post()
   create(@Body() body) {
     return wrapperResponse(this.userService.createUser(body), '新增用户成功')
