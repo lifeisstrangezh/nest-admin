@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import {
+  FindOptionsWhere,
+  Like,
+  QueryDeepPartialEntity,
+  Repository,
+} from 'typeorm'
 import { User } from './entities/user.entity'
 import * as md5 from 'md5'
 
@@ -12,17 +17,24 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
   createUser(createUserDto: CreateUserDto) {
-    const user = new User()
-    user.username = createUserDto.username
-    user.password = md5(createUserDto.password).toUpperCase()
-    user.nickname = createUserDto.nickname || createUserDto.username
-    user.role = createUserDto.role
-    user.avatar = createUserDto.avatar
-    user.active = 1
+    // const user = new User()
+    // user.username = createUserDto.username
+    // user.password = md5(createUserDto.password).toUpperCase()
+    // user.nickname = createUserDto.nickname || createUserDto.username
+    // user.role = createUserDto.role
+    // user.avatar = createUserDto.avatar
+    // user.active = 1
+    
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: md5(createUserDto.password).toUpperCase(),
+      nickname: createUserDto.nickname || createUserDto.username,
+      active: 1,
+    })
     return this.userRepository.save(user)
   }
 
-  getUserList(params) {
+  async getUserList(params) {
     let page = +params.page || 1
     let pageSize = +params.pageSize || 20
     const { id = '', username = '', active = 1 } = params
@@ -32,38 +44,43 @@ export class UserService {
     if (pageSize <= 0) {
       pageSize = 20
     }
-    let where = 'where 1=1'
+
+    const where: FindOptionsWhere<User> = {}
     if (id) {
-      where += ` AND id='${id}'`
+      where.id = id
     }
     if (username) {
-      where += ` AND username LIKE '%${username}%'`
+      where.username = Like(`%${username}%`)
     }
     if (active) {
-      where += ` AND active='${active}'`
+      where.active = active
     }
-    const sql = `select * from admin_user ${where} limit ${pageSize} offset ${
-      (page - 1) * pageSize
-    }`
-    return this.userRepository.query(sql)
+
+    const [items, total] = await this.userRepository.findAndCount({
+      where,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    })
+
+    return {
+      items,
+      total,
+    }
   }
 
   update(params) {
     const { username, nickname, active, role } = params
-    const setSql = []
+    const partial: QueryDeepPartialEntity<User> = {}
     if (nickname) {
-      setSql.push(`nickname="${nickname}"`)
+      partial.nickname = nickname
     }
-    if (active) {
-      setSql.push(`active="${active}"`)
+    if (active !== undefined && active !== null) {
+      partial.active = active
     }
     if (role) {
-      setSql.push(`role=${JSON.stringify(role)}`)
+      partial.role = role
     }
-    const updateSql = `UPDATE admin_user SET ${setSql.join(
-      ',',
-    )} WHERE username="${username}"`
-    return this.userRepository.query(updateSql)
+    return this.userRepository.update({ username }, partial)
   }
 
   findOne(id: number) {
@@ -71,8 +88,7 @@ export class UserService {
   }
 
   remove(id: number) {
-    const sql = `DELETE FROM admin_user WHERE id = ${id}`
-    return this.userRepository.query(sql)
+    return this.userRepository.delete(id)
   }
 
   findByUsername(username: string) {
