@@ -37,7 +37,7 @@ export class UserService {
   async getUserList(params) {
     let page = +params.page || 1
     let pageSize = +params.pageSize || 20
-    const { id = '', username = '', active = 1 } = params
+    const { id = '', username = '', active } = params
     if (page <= 0) {
       page = 1
     }
@@ -69,18 +69,21 @@ export class UserService {
   }
 
   update(params) {
-    const { username, nickname, active, role } = params
-    const partial: QueryDeepPartialEntity<User> = {}
-    if (nickname) {
-      partial.nickname = nickname
-    }
-    if (active !== undefined && active !== null) {
-      partial.active = active
-    }
-    if (role) {
-      partial.role = role
-    }
-    return this.userRepository.update({ username }, partial)
+    // const { username, nickname, active, role, id } = params
+    // const partial: QueryDeepPartialEntity<User> = {
+    //   ...params
+    // }
+    // if (nickname) {
+    //   partial.nickname = nickname
+    // }
+    // if (active !== undefined && active !== null) {
+    //   partial.active = active
+    // }
+    // if (role) {
+    //   partial.role = role
+    // }
+    const { id, ...rest } = params
+    return this.userRepository.update(id, rest)
   }
 
   findOne(id: number) {
