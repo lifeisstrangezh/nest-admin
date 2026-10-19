@@ -27,11 +27,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     // }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '120.24.233.72', // 120.24.233.72
-      port: 3306,
-      username: 'lifeisstrange',
-      password: '263919az&&d!',
-      database: 'online_book',
+      host: process.env.DB_HOST || '120.24.233.72',
+      port: Number(process.env.DB_PORT) || 3306,
+      username: process.env.DB_USERNAME || 'lifeisstrange',
+      password: process.env.DB_PASSWORD || '263919az&&d!',
+      database: process.env.DB_DATABASE || 'online_book',
       autoLoadEntities: true,
       // entities: [User], // 和上面的autoLoadEntities任选一个
       // entities: [__dirname + '/**/*.entity{.ts,.js}'],
