@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { UserModule } from '../user/user.module'
 import { JwtModule } from '@nestjs/jwt'
 import { JWT_SECRET_KEY } from './auth.jwt.secrect'
+import { TokenBlacklistService } from './token-blacklist.service'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { JWT_SECRET_KEY } from './auth.jwt.secrect'
   controllers: [AuthController],
   providers: [
     AuthService,
+    TokenBlacklistService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

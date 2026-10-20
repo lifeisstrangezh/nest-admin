@@ -7,6 +7,7 @@ import { BookModule } from './modules/book/book.module'
 import { ContentsModule } from './modules/contents/contents.module'
 import { MenuModule } from './modules/menu/menu.module'
 import { RoleModule } from './modules/role/role.module'
+import { RedisModule } from './redis/redis.module'
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { getMysqlUsernameAndPassword } from './utils';
 
@@ -37,6 +38,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       // entities: [__dirname + '/**/*.entity{.ts,.js}'],
       // synchronize: true,
     }),
+    RedisModule,
     UserModule,
     AuthModule,
     BookModule,

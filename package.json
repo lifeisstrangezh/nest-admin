@@ -28,6 +28,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "adm-zip": "^0.5.14",
     "fs-extra": "^11.2.0",
+    "ioredis": "^5.11.1",
     "md5": "^2.3.0",
     "mysql2": "^3.10.3",
     "nest-winston": "^1.9.7",

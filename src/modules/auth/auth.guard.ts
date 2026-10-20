@@ -9,11 +9,15 @@ import { Observable } from 'rxjs'
 import { IS_PUBLIC_KEY } from './public.decorator'
 import { JwtService } from '@nestjs/jwt'
 import { JWT_SECRET_KEY } from './auth.jwt.secrect'
-import { isBlacklisted } from './token-blacklist'
+import { TokenBlacklistService } from './token-blacklist.service'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+    private tokenBlacklistService: TokenBlacklistService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
@@ -30,7 +34,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException()
     }
     // 已登出的 token 直接拒绝
-    if (isBlacklisted(token)) {
+    if (await this.tokenBlacklistService.isBlacklisted(token)) {
       throw new UnauthorizedException()
     }
     try {

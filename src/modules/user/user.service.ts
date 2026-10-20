@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import {
   FindOptionsWhere,
   Like,
-  QueryDeepPartialEntity,
   Repository,
 } from 'typeorm'
 import { User } from './entities/user.entity'
